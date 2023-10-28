@@ -73,7 +73,7 @@ const Calendar = () => {
           <button onClick={goToNextWeek} className=''>Next Week</button>
         </div>
         <div className='p-2 '>
-          <h3>Timezone :</h3>
+          <h3 className=' text-lg font-semibold'>Timezone :</h3>
           <select value={timeZone} onChange={handleTimeZoneChange} className='w-[100%] p-2 border-2 border-gray-600'>
             <option value="UTC+5:30">[UTC+5:30] India Standard Time</option>
             <option value="UTC+9:30">[UTC+9:30] Australia Standard Time</option>
@@ -90,7 +90,7 @@ const Calendar = () => {
               return (
                 <div className='flex w-[100%]' key={dayIndex}>
                   <div className="p-4 w-36 flex flex-col items-center justify-center bg-slate-200">
-                    <h2>{moment(currentDateForDay).format('ddd')}</h2>
+                    <h2 className=' text-red-600 font-medium'>{moment(currentDateForDay).format('ddd')}</h2>
                     <p>{moment(currentDateForDay).format('MMM D')}</p>
                   </div>
                   <div className="p-4 flex items-center justify-start flex-wrap">
