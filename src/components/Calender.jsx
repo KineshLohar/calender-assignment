@@ -10,15 +10,29 @@ const Calendar = () => {
   const [timeSlots, setTimeSlots] = useState([]);
   const [currentDate] = useState(new Date());
   const [data, setData] = useState(null);
+  const [startHour, setStartHour] = useState(8);
+  const [endHour, setEndHour] = useState(23);
 
-
+  console.log(timeZone)
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
 
   const handleTimeZoneChange = (e) => {
-    setTimeZone(e.target.value);
+    const currentTimeZone = e.target.value;
+    setTimeZone(currentTimeZone);
+    if(currentTimeZone === "UTC+9:30"){
+      setStartHour(10);
+      setEndHour(21);
+    }
+    else if(currentTimeZone === "UTC-8"){
+      setStartHour(3);
+      setEndHour(17);
+    }else if(currentTimeZone === "UTC+5:30"){
+      setStartHour(8);
+      setEndHour(23);
+    }
   };
 
   const goToNextWeek = () => {
@@ -31,9 +45,10 @@ const Calendar = () => {
 
   // Define a function to generate time slots from 8:00 AM to 11:00 PM with 30-minute intervals.
   const generateTimeSlots = () => {
+
     const timeSlots = [];
-    let currentTime = moment().set({ hour: 8, minute: 0, second: 0 });
-    const endTime = moment().set({ hour: 23, minute: 0, second: 0 });
+    let currentTime = moment().set({ hour: startHour, minute: 0, second: 0 });
+    const endTime = moment().set({ hour: endHour, minute: 0, second: 0 });
 
     while (currentTime.isSameOrBefore(endTime)) {
       timeSlots.push(currentTime.format('HH:mm'));
@@ -47,26 +62,22 @@ const Calendar = () => {
     const filteredTimeSlots = generateTimeSlots();
     setTimeSlots(filteredTimeSlots);
     setData(jsondata);
-  
-  }, []);
-
-  console.log(data)
+  }, [timeZone]);
 
   return (
     <div>
       <div>
         <div className='h-[4rem] w-[100%] p-4 bg-slate-100 flex items-center justify-start'>
           <button onClick={goToPreviousWeek}>Previous Week</button>
-          <DatePicker selected={selectedDate} onChange={handleDateChange} dateFormat="yyyy-MM-dd" className='mx-6' />
+          <DatePicker selected={selectedDate} onChange={handleDateChange} dateFormat="yyyy-MMM-dd" className='mx-6 p-2' />
           <button onClick={goToNextWeek} className=''>Next Week</button>
         </div>
         <div className='p-2 '>
           <h3>Timezone :</h3>
           <select value={timeZone} onChange={handleTimeZoneChange} className='w-[100%] p-2 border-2 border-gray-600'>
-            <option value="UTC-5">UTC-5</option>
-            <option value="UTC-6">UTC-6</option>
-            <option value="UTC-7">UTC-7</option>
-            <option value="OtherTimeZone">Other Time Zone</option>
+            <option value="UTC+5:30">[UTC+5:30] India Standard Time</option>
+            <option value="UTC+9:30">[UTC+9:30] Australia Standard Time</option>
+            <option value="UTC-8">[UTC-8] Pacific Standard Time</option>
           </select>
         </div>
       </div>
@@ -77,12 +88,12 @@ const Calendar = () => {
               const currentDateForDay = moment(selectedDate).add(dayIndex, 'days');
               const isPast = currentDateForDay < currentDate;
               return (
-                <div className='flex' key={dayIndex}>
+                <div className='flex w-[100%]' key={dayIndex}>
                   <div className="p-4 w-36 flex flex-col items-center justify-center bg-slate-200">
                     <h2>{moment(currentDateForDay).format('ddd')}</h2>
                     <p>{moment(currentDateForDay).format('MMM D')}</p>
                   </div>
-                  <div className="p-4 flex flex-wrap">
+                  <div className="p-4 flex items-center justify-start flex-wrap">
                     {isPast ? (
                       <label className="bg-gray-300 p-2 rounded-md">Past</label>
                     ) : currentDateForDay.format('d') >= 6 || currentDateForDay.format('d') < 1  ? (
@@ -94,15 +105,13 @@ const Calendar = () => {
                         const isChecked = data.some((item) => {
                           const dateMatches = moment(item.Date).isSame(currentDateForDayFormatted, 'day');
                           const timeMatches = item.Time === time;
-                      
-                      
                           return dateMatches && timeMatches;
                         });
 
                         return (
                           <div key={index} className='m-2'>
                             <div>
-                              <input type="checkbox" id={timeSlotId} defaultChecked={isChecked} />
+                              <input type="checkbox" id={timeSlotId} defaultChecked={isChecked} className='mx-2'/>
                               <label htmlFor={timeSlotId}>{time}</label>
                             </div>
                           </div>
